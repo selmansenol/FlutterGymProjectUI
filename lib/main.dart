@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gym_project/Pages/videoinfo.dart';
 
 import 'pages/homepage.dart';
 
