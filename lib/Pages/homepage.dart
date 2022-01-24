@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:gym_project/Pages/videoinfo.dart';
 import 'package:gym_project/colors.dart' as colors;
@@ -14,22 +15,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List info = [];
+  bool state = false;
   _initData() {
     DefaultAssetBundle.of(context).loadString("json/info.json").then((value) {
       setState(() {
         info = json.decode(value);
+        state = true;
       });
     });
   }
 
   @override
   void initState() {
-    super.initState();
     _initData();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final int axiscount =
+        MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
+    final double aspectratio = 0.9;
     return Scaffold(
       backgroundColor: colors.AppColor.homePageBackground,
       body: SafeArea(
@@ -301,52 +307,48 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Row(
                   children: [
-                    Text(
-                      "Area of focus",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w500,
-                        color: colors.AppColor.homePageTitle,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        "Area of focus",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w500,
+                          color: colors.AppColor.homePageTitle,
+                        ),
                       ),
                     ),
                   ],
                 ),
-                GridView.builder(
-  itemCount: 4,
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2),
-  itemBuilder: (BuildContext context, int index) {
-    return Card(
-      child:GridTile(
-        footer:Text("name"),
-        child:Text("surname"), //just for testing, will fill with image later
-      ),
-    );
-                SizedBox(
-                  height: info.length.toDouble() ~/ 2 * 230,
-                  width: MediaQuery.of(context).size.width,
-                  child: ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: info.length.toDouble() ~/ 2, //2
-                      itemBuilder: (_, i) {
-                        int a = 2 * i;
-                        int b = 2 * i + 1;
-                        return Row(
-                          children: [
-                            Container(
-                              width:
-                                  (MediaQuery.of(context).size.width - 90) / 2,
-                              height: 170,
-                              margin: const EdgeInsets.only(
-                                bottom: 30,
-                              ),
+                state
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: ((info.length.toDouble() ~/ axiscount) *
+                                ((MediaQuery.of(context).size.width -
+                                        (30 * 2) +
+                                        10) /
+                                    axiscount /
+                                    aspectratio)) +
+                            10,
+                        child: GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: info.length,
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: axiscount,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                            childAspectRatio: aspectratio,
+                          ),
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
                               padding: const EdgeInsets.only(bottom: 5),
                               decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(15),
                                   image: DecorationImage(
-                                    image: AssetImage(info[a]['img']),
+                                    image: AssetImage(info[index]['img']),
                                   ),
                                   boxShadow: [
                                     BoxShadow(
@@ -366,59 +368,21 @@ class _HomePageState extends State<HomePage> {
                                 child: Align(
                                   alignment: Alignment.bottomCenter,
                                   child: Text(
-                                    info[a]["title"],
+                                    info[index]["title"],
                                     style: TextStyle(
                                         fontSize: 20,
                                         color: colors.AppColor.homePageDetail),
                                   ),
                                 ),
                               ),
-                            ),
-                            Container(
-                              width:
-                                  (MediaQuery.of(context).size.width - 90) / 2,
-                              height: 170,
-                              margin: const EdgeInsets.only(
-                                left: 30,
-                                bottom: 30,
-                              ),
-                              padding: const EdgeInsets.only(bottom: 5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: DecorationImage(
-                                    image: AssetImage(info[b]['img']),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 3,
-                                      offset: const Offset(5, 5),
-                                      color: colors.AppColor.gradientSecond
-                                          .withOpacity(0.1),
-                                    ),
-                                    BoxShadow(
-                                      blurRadius: 3,
-                                      offset: const Offset(-5, -5),
-                                      color: colors.AppColor.gradientSecond
-                                          .withOpacity(0.1),
-                                    )
-                                  ]),
-                              child: Center(
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                    info[b]["title"],
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: colors.AppColor.homePageDetail),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      }),
-                )
+                            );
+                          },
+                        ),
+                      )
+                    : SpinKitDoubleBounce(
+                        color: Colors.indigo,
+                        size: 72.0,
+                      ),
               ],
             ),
           ),

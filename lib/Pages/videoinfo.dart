@@ -446,20 +446,13 @@ class _VideoInfoState extends State<VideoInfo> {
                   ),
                 ),
               ),
-              Row(
-                children: [
-                  for (int i = 0; i < 70; i++)
-                    i.isEven
-                        ? Container(
-                            width: 3,
-                            height: 1,
-                            decoration: BoxDecoration(
-                                color: const Color(0xFF839fed),
-                                borderRadius: BorderRadius.circular(2)),
-                          )
-                        : Container(width: 3, height: 1, color: Colors.white)
-                ],
-              )
+              Expanded(
+                child: Divider(
+                  endIndent: 50.0,
+                  thickness: 0.8,
+                  color: Colors.grey[500],
+                ),
+              ),
             ],
           )
         ],
