@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
+import 'package:gym_project/Pages/exerciseinfo.dart';
 import 'package:gym_project/Pages/videoinfo.dart';
 import 'package:gym_project/colors.dart' as colors;
 
@@ -35,7 +36,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final int axiscount =
         MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 3;
-    final double aspectratio = 0.9;
+    const double aspectratio = 0.9;
     return Scaffold(
       backgroundColor: colors.AppColor.homePageBackground,
       body: SafeArea(
@@ -324,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                 state
                     ? SizedBox(
                         width: MediaQuery.of(context).size.width,
-                        height: ((info.length.toDouble() ~/ axiscount) *
+                        height: ((info.length.toDouble() / axiscount) *
                                 ((MediaQuery.of(context).size.width -
                                         (30 * 2) +
                                         10) /
@@ -342,36 +343,42 @@ class _HomePageState extends State<HomePage> {
                             childAspectRatio: aspectratio,
                           ),
                           itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(15),
-                                  image: DecorationImage(
-                                    image: AssetImage(info[index]['img']),
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      blurRadius: 3,
-                                      offset: const Offset(5, 5),
-                                      color: colors.AppColor.gradientSecond
-                                          .withOpacity(0.1),
+                            return InkWell(
+                              onTap: () {
+                                Get.to(() => const ExerciseInfo());
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.only(bottom: 5),
+                                decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(15),
+                                    image: DecorationImage(
+                                      image: AssetImage(info[index]['img']),
                                     ),
-                                    BoxShadow(
-                                      blurRadius: 3,
-                                      offset: const Offset(-5, -5),
-                                      color: colors.AppColor.gradientSecond
-                                          .withOpacity(0.1),
-                                    )
-                                  ]),
-                              child: Center(
-                                child: Align(
-                                  alignment: Alignment.bottomCenter,
-                                  child: Text(
-                                    info[index]["title"],
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        color: colors.AppColor.homePageDetail),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        blurRadius: 3,
+                                        offset: const Offset(5, 5),
+                                        color: colors.AppColor.gradientSecond
+                                            .withOpacity(0.1),
+                                      ),
+                                      BoxShadow(
+                                        blurRadius: 3,
+                                        offset: const Offset(-5, -5),
+                                        color: colors.AppColor.gradientSecond
+                                            .withOpacity(0.1),
+                                      )
+                                    ]),
+                                child: Center(
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Text(
+                                      info[index]["title"],
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          color:
+                                              colors.AppColor.homePageDetail),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -379,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                           },
                         ),
                       )
-                    : SpinKitDoubleBounce(
+                    : const SpinKitDoubleBounce(
                         color: Colors.indigo,
                         size: 72.0,
                       ),
