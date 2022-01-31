@@ -4,6 +4,8 @@ import 'package:gym_project/Model/exercise.dart';
 import 'package:http/http.dart' as http;
 
 class Api {
+  static String rapid_key =
+      "84d31b5d54msh9120e64135a6d09p1bd354jsn0f2a55d40ed8";
   String upperarms =
       "https://exercisedb.p.rapidapi.com/exercises/bodyPart/upper%20arms?rapidapi-key=84d31b5d54msh9120e64135a6d09p1bd354jsn0f2a55d40ed8";
   String lowerarms =

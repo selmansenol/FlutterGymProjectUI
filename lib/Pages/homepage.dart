@@ -345,7 +345,10 @@ class _HomePageState extends State<HomePage> {
                           itemBuilder: (BuildContext context, int index) {
                             return InkWell(
                               onTap: () {
-                                Get.to(() => const ExerciseInfo());
+                                Get.to(() => ExerciseInfo(
+                                      page: index,
+                                      title: info[index]["title"],
+                                    ));
                               },
                               child: Container(
                                 padding: const EdgeInsets.only(bottom: 5),

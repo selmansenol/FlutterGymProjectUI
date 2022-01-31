@@ -1,7 +1,10 @@
 import 'dart:convert';
 
+import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:gym_project/Api/api.dart';
+import 'package:gym_project/Model/exercise.dart';
 import 'package:gym_project/colors.dart' as colors;
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
@@ -26,9 +29,34 @@ class _VideoInfoState extends State<VideoInfo> {
     });
   }
 
+  List<Exercise> exercises = [];
+  List<Exercise> exercisesBodyWeight = [];
+  List<String> urlList = [
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/upper%20legs?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/waist?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/lower%20legs?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/target/forearms?rapidapi-key=" +
+        Api.rapid_key.toString(),
+  ];
+  void initialize() async {
+    exercises = await Api.getUpperArms(urlList[0]);
+    if (mounted) {
+      setState(() {
+        print("Name: " + exercises.first.name);
+      });
+    }
+    exercisesBodyWeight = exercises
+        .where((e) => e.equipment == "body weight" || e.equipment == "dumbbell")
+        .toList();
+  }
+
   @override
   void initState() {
     super.initState();
+    initialize();
     _initData();
   }
 
@@ -176,7 +204,7 @@ class _VideoInfoState extends State<VideoInfo> {
                                   width: 5,
                                 ),
                                 Text(
-                                  "Resistent band",
+                                  "Dumbbell",
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: colors.AppColor.secondPageIconColor,
@@ -214,7 +242,7 @@ class _VideoInfoState extends State<VideoInfo> {
                                   width: 5,
                                 ),
                                 Text(
-                                  "Kettebell",
+                                  "Body Weight",
                                   style: TextStyle(
                                     fontSize: 16,
                                     color: colors.AppColor.secondPageIconColor,
@@ -366,7 +394,7 @@ class _VideoInfoState extends State<VideoInfo> {
   _listView() {
     return ListView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 8),
-        itemCount: videoInfo.length,
+        itemCount: exercisesBodyWeight.length,
         itemBuilder: (_, int index) {
           return GestureDetector(
               onTap: () {
@@ -381,8 +409,8 @@ class _VideoInfoState extends State<VideoInfo> {
   }
 
   _buildCard(int index) {
-    return Container(
-      height: 135,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Column(
         children: [
           Row(
@@ -393,7 +421,9 @@ class _VideoInfoState extends State<VideoInfo> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
                   image: DecorationImage(
-                    image: AssetImage(videoInfo[index]["thumbnail"]),
+                    image: exercisesBodyWeight.isNotEmpty
+                        ? NetworkImage(exercisesBodyWeight[index].gifUrl)
+                        : const NetworkImage(""),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -401,27 +431,32 @@ class _VideoInfoState extends State<VideoInfo> {
               const SizedBox(
                 width: 10,
               ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    videoInfo[index]["title"],
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 3),
-                    child: Text(
-                      videoInfo[index]["time"],
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                      ),
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      StringUtils.capitalize(exercisesBodyWeight[index].name),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  )
-                ],
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 3),
+                      child: Text(
+                        StringUtils.capitalize(
+                            exercisesBodyWeight[index].target),
+                        style: TextStyle(
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               )
             ],
           ),

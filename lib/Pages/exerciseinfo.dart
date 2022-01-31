@@ -6,7 +6,10 @@ import 'package:gym_project/Model/exercise.dart';
 import 'package:gym_project/colors.dart' as colors;
 
 class ExerciseInfo extends StatefulWidget {
-  const ExerciseInfo({Key? key}) : super(key: key);
+  final int page;
+  final String title;
+  const ExerciseInfo({Key? key, required this.page, required this.title})
+      : super(key: key);
 
   @override
   _ExerciseInfoState createState() => _ExerciseInfoState();
@@ -14,15 +17,26 @@ class ExerciseInfo extends StatefulWidget {
 
 class _ExerciseInfoState extends State<ExerciseInfo> {
   List<Exercise> exercises = [];
-  String upperarms =
-      "https://exercisedb.p.rapidapi.com/exercises/bodyPart/upper%20arms?rapidapi-key=84d31b5d54msh9120e64135a6d09p1bd354jsn0f2a55d40ed8";
+  List<Exercise> exercises_bodyweight = [];
+  List<String> urlList = [
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/upper%20legs?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/waist?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/bodyPart/lower%20legs?rapidapi-key=" +
+        Api.rapid_key.toString(),
+    "https://exercisedb.p.rapidapi.com/exercises/target/forearms?rapidapi-key=" +
+        Api.rapid_key.toString(),
+  ];
   void initialize() async {
-    exercises = await Api.getUpperArms(upperarms);
+    exercises = await Api.getUpperArms(urlList[widget.page]);
     if (mounted) {
       setState(() {
         print("Name: " + exercises.first.name);
       });
     }
+    exercises_bodyweight =
+        exercises.where((e) => e.equipment == "body weight").toList();
   }
 
   @override
@@ -44,7 +58,7 @@ class _ExerciseInfoState extends State<ExerciseInfo> {
         shadowColor: colors.AppColor.gradientSecond.withOpacity(0.1),
         elevation: 5,
         title: Text(
-          "Arms Exercises",
+          widget.title + " Exercises",
           style: TextStyle(
             fontSize: 30,
             color: colors.AppColor.homePageTitle,
@@ -55,7 +69,7 @@ class _ExerciseInfoState extends State<ExerciseInfo> {
       body: SafeArea(
         child: GridView.builder(
           padding: const EdgeInsets.all(20.0),
-          itemCount: exercises.length,
+          itemCount: exercises_bodyweight.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: axiscount,
             crossAxisSpacing: 20,
@@ -63,7 +77,7 @@ class _ExerciseInfoState extends State<ExerciseInfo> {
             childAspectRatio: aspectratio,
           ),
           itemBuilder: (BuildContext context, int index) {
-            return exercises.isNotEmpty
+            return exercises_bodyweight.isNotEmpty
                 ? Container(
                     clipBehavior: Clip.hardEdge,
                     width: MediaQuery.of(context).size.width * .5,
@@ -87,14 +101,15 @@ class _ExerciseInfoState extends State<ExerciseInfo> {
                     child: Column(
                       children: [
                         Image.network(
-                          exercises[index].gifUrl,
+                          exercises_bodyweight[index].gifUrl,
                           color: colors.AppColor.gradientFirst,
                           colorBlendMode: BlendMode.softLight,
                         ),
                         Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Text(
-                            StringUtils.capitalize(exercises[index].name),
+                            StringUtils.capitalize(
+                                exercises_bodyweight[index].name),
                             style: TextStyle(
                               fontSize: 16,
                               color: colors.AppColor.homePageDetail,
